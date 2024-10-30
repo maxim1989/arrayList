@@ -3,9 +3,13 @@ package org.example.service;
 import org.example.exceptions.IndexException;
 import org.example.exceptions.NotFoundException;
 import org.example.exceptions.NullException;
+import org.example.exceptions.SizeException;
+
+import java.util.Arrays;
 
 public class StringListImpl implements StringList {
     private final String[] store;
+    private int size;
 
     public StringListImpl(int size) {
         this.store = new String[size];
@@ -17,11 +21,14 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        for (int i = 0; i < store.length; i++) {
-            if (store[i] == null) {
-                store[i] = item;
-                return item;
-            }
+        if (size == store.length) {
+            throw new SizeException();
+        }
+
+        if (size < store.length) {
+            size++;
+            store[size - 1] = item;
+            return item;
         }
 
         return null;
@@ -33,21 +40,14 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        if (index < 0 || index >= store.length) {
+        if (index < 0 || index > size - 1) {
             throw new IndexException();
         }
 
-        if (index == store.length - 1 | store[index] == null) {
-            store[index] = item;
-        } else {
-            for (int i = store.length - 1; i >= index; i--) {
-                if (i != index) {
-                    store[i] = store[i - 1];
-                } else {
-                    store[i] = item;
-                }
-            }
+        for (int i = size - 1; i > index; i--) {
+            store[i] = store[i - 1];
         }
+        store[index] = item;
 
         return item;
     }
@@ -58,7 +58,7 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        if (index < 0 || index >= store.length) {
+        if (index < 0 || index > size - 1) {
             throw new IndexException();
         }
 
@@ -75,16 +75,16 @@ public class StringListImpl implements StringList {
 
         int index = -1;
 
-        for (int i = 0; i < store.length; i++) {
+        for (int i = 0; i <= size - 1; i++) {
             if (store[i] != null && store[i].equals(item)) {
                 index = i;
             }
 
-            if (index >= 0 & i + 1 < store.length) {
+            if (index >= 0 & i < size - 1) {
                 store[i] = store[i + 1];
             }
 
-            if (index >= 0 & i + 1 == store.length) {
+            if (index >= 0 & i == size - 1) {
                 store[i] = null;
             }
         }
@@ -93,12 +93,13 @@ public class StringListImpl implements StringList {
             throw new NotFoundException();
         }
 
+        size--;
         return item;
     }
 
     @Override
     public String remove(int index) {
-        if (index < 0 || index >= store.length) {
+        if (index < 0 || index >= size - 1) {
             throw new IndexException();
         }
 
@@ -108,16 +109,17 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        for (int i = index; i < store.length; i++) {
-            if (i + 1 < store.length) {
+        for (int i = index; i <= size - 1; i++) {
+            if (i < size - 1) {
                 store[i] = store[i + 1];
             }
 
-            if (i + 1 == store.length) {
+            if (i == size - 1) {
                 store[i] = null;
             }
         }
 
+        size--;
         return result;
     }
 
@@ -127,12 +129,8 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        for (final String element : store) {
-            if (element == null) {
-                continue;
-            }
-
-            if (element.equals(item)) {
+        for (int i = 0; i < size; i++) {
+            if (store[i].equals(item)) {
                 return true;
             }
         }
@@ -146,11 +144,7 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        for (int i = 0; i < store.length; i++) {
-            if (store[i] == null) {
-                continue;
-            }
-
+        for (int i = 0; i < size; i++) {
             if (item.equals(store[i])) {
                 return i;
             }
@@ -165,11 +159,7 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        for (int i = store.length - 1; i >= 0; i--) {
-            if (store[i] == null) {
-                continue;
-            }
-
+        for (int i = size - 1; i >= 0; i--) {
             if (item.equals(store[i])) {
                 return i;
             }
@@ -180,7 +170,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public String get(int index) {
-        if (index < 0 || index >= store.length) {
+        if (index < 0 || index >= size) {
             throw new IndexException();
         }
 
@@ -193,8 +183,8 @@ public class StringListImpl implements StringList {
             throw new NullException();
         }
 
-        if (this.size() == otherList.size()) {
-            for (int i = 0; i < store.length; i++) {
+        if (size == otherList.size()) {
+            for (int i = 0; i < size; i++) {
                 if (store[i] == null & otherList.toArray()[i] == null) {
                     continue;
                 }
@@ -219,14 +209,7 @@ public class StringListImpl implements StringList {
 
     @Override
     public int size() {
-        int counter = 0;
-
-        for (int i = 0; i < store.length; i++) {
-            if (store[i] != null) {
-                counter++;
-            }
-        }
-        return counter;
+        return size;
     }
 
     @Override
@@ -241,12 +224,13 @@ public class StringListImpl implements StringList {
                 store[i] = null;
             }
         }
+        size = 0;
     }
 
     @Override
     public String[] toArray() {
-        final String[] newArr = new String[store.length];
-        System.arraycopy(store, 0, newArr, 0, store.length);
+        final String[] newArr = new String[size()];
+        if (size >= 0) System.arraycopy(store, 0, newArr, 0, size);
         return newArr;
     }
 }

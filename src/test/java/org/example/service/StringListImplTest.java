@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.exceptions.IndexException;
 import org.example.exceptions.NotFoundException;
 import org.example.exceptions.NullException;
+import org.example.exceptions.SizeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,40 +31,43 @@ public class StringListImplTest {
         assertEquals("test 1", out.toArray()[0]);
         assertEquals("test 2", out.toArray()[1]);
         assertEquals("test 3", out.toArray()[2]);
-        assertNull(out.add("test 4"));
+        assertThrows(SizeException.class, () -> out.add("test 4"));
         assertThrows(NullException.class, () -> out.add(null));
     }
 
     @Test
     public void addStringByIndex() {
-        assertEquals("test 1", out.add(2, "test 1"));
-        assertEquals("test 2", out.add(1, "test 2"));
-        assertEquals("test 3", out.add(0, "test 3"));
-        assertEquals("test 1", out.toArray()[2]);
-        assertEquals("test 2", out.toArray()[1]);
-        assertEquals("test 3", out.toArray()[0]);
-        assertEquals("test 5", out.add(0, "test 5"));
-        assertEquals("test 5", out.toArray()[0]);
-        assertEquals("test 3", out.toArray()[1]);
-        assertEquals("test 2", out.toArray()[2]);
+        assertThrows(IndexException.class, () -> out.add(2, "test 1"));
+        assertThrows(IndexException.class, () -> out.add(-1, "test 2"));
+        out.add("test 3");
+        assertEquals("test 4", out.add(0, "test 4"));
+        out.add("test 5");
+        out.add("test 6");
+        assertEquals("test 7", out.add(1, "test 7"));
+        assertEquals("test 4", out.toArray()[0]);
+        assertEquals("test 7", out.toArray()[1]);
+        assertEquals("test 5", out.toArray()[2]);
 
-        assertThrows(IndexException.class, () -> out.add(-1, "test 6"));
-        assertThrows(IndexException.class, () -> out.add(3, "test 7"));
         assertThrows(NullException.class, () -> out.add(2, null));
     }
 
     @Test
     public void setStringByIndex() {
-        assertEquals("test 1", out.set(0, "test 1"));
-        assertEquals("test 2", out.set(1, "test 2"));
-        assertEquals("test 3", out.set(2, "test 3"));
-        assertEquals("test 4", out.set(1, "test 4"));
-        assertEquals("test 1", out.toArray()[0]);
-        assertEquals("test 4", out.toArray()[1]);
-        assertEquals("test 3", out.toArray()[2]);
         assertThrows(IndexException.class, () -> out.set(-1, "test 5"));
         assertThrows(IndexException.class, () -> out.set(3, "test 6"));
         assertThrows(NullException.class, () -> out.set(2, null));
+        out.add("test 1");
+        out.add("test 2");
+        out.add("test 3");
+        assertEquals("test 1", out.toArray()[0]);
+        assertEquals("test 2", out.toArray()[1]);
+        assertEquals("test 3", out.toArray()[2]);
+        assertEquals("test 4", out.set(0, "test 4"));
+        assertEquals("test 5", out.set(1, "test 5"));
+        assertEquals("test 6", out.set(2, "test 6"));
+        assertEquals("test 4", out.toArray()[0]);
+        assertEquals("test 5", out.toArray()[1]);
+        assertEquals("test 6", out.toArray()[2]);
     }
 
     @Test
@@ -123,7 +127,7 @@ public class StringListImplTest {
     public void get() {
         out.add("test 1");
         assertEquals("test 1", out.get(0));
-        assertNull(out.get(1));
+        assertThrows(IndexException.class, () -> out.get(1));
         assertThrows(IndexException.class, () -> out.get(4));
         assertThrows(IndexException.class, () -> out.get(-1));
     }
@@ -152,6 +156,11 @@ public class StringListImplTest {
         assertEquals(2, out.size());
         out.add("test 3");
         assertEquals(3, out.size());
+        out.remove("test 3");
+        assertEquals(2, out.size());
+        out.remove(0);
+        assertEquals(1, out.size());
+        assertEquals("test 2", out.get(0));
     }
 
     @Test
@@ -163,11 +172,11 @@ public class StringListImplTest {
 
     @Test
     public void clear() {
-        String[] emptyArray = new String[3];
-        assertArrayEquals(emptyArray, out.toArray());
+        assertArrayEquals(new String[0], out.toArray());
         out.add("test 1");
+        assertArrayEquals(new String[]{"test 1"}, out.toArray());
         out.clear();
-        assertArrayEquals(emptyArray, out.toArray());
+        assertArrayEquals(new String[0], out.toArray());
     }
 
     @Test
