@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegerListImplTest {
@@ -188,5 +190,22 @@ public class IntegerListImplTest {
         out.add(2);
         out.add(3);
         assertArrayEquals(emptyArray, out.toArray());
+    }
+
+    @Test
+    public void compareSorts() {
+        int[] array1 = IntegerListImpl.generateArray(100000);
+        int[] array2 = Arrays.copyOf(array1, 100000);
+        int[] array3 = Arrays.copyOf(array1, 100000);
+
+        long start1 = System.currentTimeMillis();
+        IntegerListImpl.sortBubble(array1);
+        System.out.println(System.currentTimeMillis() - start1);
+        long start2 = System.currentTimeMillis();
+        IntegerListImpl.sortSelection(array2);
+        System.out.println(System.currentTimeMillis() - start2);
+        long start3 = System.currentTimeMillis();
+        IntegerListImpl.sortInsertion(array3);
+        System.out.println(System.currentTimeMillis() - start3);
     }
 }
