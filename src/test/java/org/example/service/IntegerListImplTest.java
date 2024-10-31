@@ -194,9 +194,9 @@ public class IntegerListImplTest {
 
     @Test
     public void compareSorts() {
-        int[] array1 = IntegerListImpl.generateArray(100000);
-        int[] array2 = Arrays.copyOf(array1, 100000);
-        int[] array3 = Arrays.copyOf(array1, 100000);
+        Integer[] array1 = IntegerListImpl.generateArray(100000);
+        Integer[] array2 = Arrays.copyOf(array1, 100000);
+        Integer[] array3 = Arrays.copyOf(array1, 100000);
 
         long start1 = System.currentTimeMillis();
         IntegerListImpl.sortBubble(array1);

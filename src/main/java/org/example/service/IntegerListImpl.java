@@ -130,13 +130,11 @@ public class IntegerListImpl implements IntegerList {
             throw new NullException();
         }
 
-        for (int i = 0; i < size; i++) {
-            if (store[i].equals(item)) {
-                return true;
-            }
-        }
+        Integer[] newArray = new Integer[size];
+        System.arraycopy(store, 0, newArray, 0, size);
+        sortInsertion(newArray);
 
-        return false;
+        return containsBinary(newArray, item);
     }
 
     @Override
@@ -235,8 +233,8 @@ public class IntegerListImpl implements IntegerList {
         return newArr;
     }
 
-    public static int[] generateArray(int size) {
-        int[] array = new int[size];
+    public static Integer[] generateArray(int size) {
+        Integer[] array = new Integer[size];
         int range = 1000000;
 
         for (int i = 0; i < size; i++) {
@@ -246,13 +244,13 @@ public class IntegerListImpl implements IntegerList {
         return array;
     }
 
-    private static void swapElements(int[] arr, int indexA, int indexB) {
-        int tmp = arr[indexA];
+    private static void swapElements(Integer[] arr, int indexA, int indexB) {
+        Integer tmp = arr[indexA];
         arr[indexA] = arr[indexB];
         arr[indexB] = tmp;
     }
 
-    public static void sortBubble(int[] arr) {
+    public static void sortBubble(Integer[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
             for (int j = 0; j < arr.length - 1 - i; j++) {
                 if (arr[j] > arr[j + 1]) {
@@ -262,7 +260,7 @@ public class IntegerListImpl implements IntegerList {
         }
     }
 
-    public static void sortSelection(int[] arr) {
+    public static void sortSelection(Integer[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
             int minElementIndex = i;
             for (int j = i + 1; j < arr.length; j++) {
@@ -274,7 +272,7 @@ public class IntegerListImpl implements IntegerList {
         }
     }
 
-    public static void sortInsertion(int[] arr) {
+    public static void sortInsertion(Integer[] arr) {
         for (int i = 1; i < arr.length; i++) {
             int temp = arr[i];
             int j = i;
@@ -284,5 +282,25 @@ public class IntegerListImpl implements IntegerList {
             }
             arr[j] = temp;
         }
+    }
+
+    public static boolean containsBinary(Integer[] arr, Integer element) {
+        int min = 0;
+        int max = arr.length - 1;
+
+        while (min <= max) {
+            int mid = (min + max) / 2;
+
+            if (element.equals(arr[mid])) {
+                return true;
+            }
+
+            if (element < arr[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        return false;
     }
 }
