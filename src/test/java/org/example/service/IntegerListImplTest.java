@@ -33,7 +33,6 @@ public class IntegerListImplTest {
         assertEquals(1, out.toArray()[0]);
         assertEquals(2, out.toArray()[1]);
         assertEquals(3, out.toArray()[2]);
-        assertThrows(SizeException.class, () -> out.add(4));
         assertThrows(NullException.class, () -> out.add(null));
     }
 
@@ -207,5 +206,15 @@ public class IntegerListImplTest {
         long start3 = System.currentTimeMillis();
         IntegerListImpl.sortInsertion(array3);
         System.out.println(System.currentTimeMillis() - start3);
+    }
+
+    @Test
+    public void grow() {
+        assertEquals(0, out.size());
+        out.add(1);
+        out.add(2);
+        out.add(3);
+        out.add(4);
+        assertEquals(4, out.size());
     }
 }
