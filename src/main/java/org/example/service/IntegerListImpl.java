@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class IntegerListImpl implements IntegerList {
-    private final Integer[] store;
+    private Integer[] store;
     private int size;
 
     public IntegerListImpl(int size) {
@@ -23,7 +23,7 @@ public class IntegerListImpl implements IntegerList {
         }
 
         if (size == store.length) {
-            throw new SizeException();
+            grow();
         }
 
         if (size < store.length) {
@@ -302,5 +302,42 @@ public class IntegerListImpl implements IntegerList {
             }
         }
         return false;
+    }
+
+    private void grow() {
+        int extraSize = store.length / 2;
+        int newSize = store.length + extraSize;
+        Integer[] newStore = new Integer[newSize];
+
+        for (int i = 0; i < store.length; i++) {
+            newStore[i] = store[i];
+        }
+
+        store = newStore;
+    }
+
+    public static void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
+        }
+    }
+
+    private static Integer partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+
+                swapElements(arr, i, j);
+            }
+        }
+
+        swapElements(arr, i + 1, end);
+        return i + 1;
     }
 }
